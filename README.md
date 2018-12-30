@@ -22,4 +22,5 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 ## References and inspirations
 
 1. Bowyer-Watson algorithm and improvements: http://www.gdmc.nl/publications/2002/Bowyer_Watson_algorithm.pdf
-2. MST + DFS TSP approximation: 
+2. MST + DFS TSP approximation:
+3. Images from [this](https://www.kaggle.com/c/traveling-santa-2018-prime-paths) Kaggle competition.
