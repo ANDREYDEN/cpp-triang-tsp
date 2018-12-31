@@ -21,6 +21,19 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 5. Cheapest Edges + DFS approximation.
 6. Delaunay Triangulation + Iterative Point Addition
 
+## Performance
+
+| Name                            | Result        | Time     | Memory   | Optimality  |
+| -                               | :-:           | -        | -        | :-:         |
+| B-W                             | Triangulation | O(VlogV) | O(VlogV) | Optimal     |
+| CLA (pointset)                  | TSP tour      | O(VlogV) | O(V^2)   | 1.5 Optimal |
+| Kruskal (pointset)              | MST           | O(VlogV) | O(V^2)   | Optimal     |
+| 2-approximation (pointset)      | TSP tour      | O(VlogV) | O(V^2)   | 2 Optimal   |
+| 2-approximation (triangulation) | TSP tour      | O(VlogV) | O(VlogV) | ?           |
+| CE + DFS                        | TSP tour      | O(VlogV) | O(VlogV) | ?           |
+| DT + IPA                        | TSP tour      | O(VlogV) | O(VlogV) | ?           |
+
+
 ## Usage
 
 The library works with text files.
