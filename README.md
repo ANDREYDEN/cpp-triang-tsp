@@ -34,6 +34,7 @@ input.txt (coordinates of points)
 ...
 ```
 
+### Triangulation
 main.cpp
 ```
 #include "triangulation.h"
@@ -60,6 +61,39 @@ triang.txt (edges of triangulation; each number represents a point according to 
 88708 123994
 88708 123616
 ...
+```
+
+### TSP
+main.cpp
+```
+#include "geometry.h"
+#include "tsp.h"
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main()
+{
+    // read coordinates from file
+    vector<Point> coords = toPoints("input.txt");
+    TSP tsp(toEdges("triang.txt", coords, 3));
+    // creating an edge subset for faster solution finding
+    tsp.toSmallestEdges();
+    // computing the tour
+    tsp.fromMST();
+    // writing to file
+    tsp.toFile("output.txt");
+    return 0;
+}
+```
+
+output.txt (resulting tour)
+```
+0
+78934
+111804
+52086
+18295
 ```
 
 ## References and inspirations
