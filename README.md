@@ -15,10 +15,11 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 ## Algorithms
 
 1. [Bowyer-Watson algorithm](https://en.wikipedia.org/wiki/Bowyer%E2%80%93Watson_algorithm) for computing [Delaunay Triangulation](https://en.wikipedia.org/wiki/Delaunay_triangulation).
-2. Cheapest Link Algorithm
+2. [Cheapest Link Algorithm](http://www.jlmartin.faculty.ku.edu/courses/math105-F14/chapter6-part5.pdf)
 3. [Kruskal's Algorithm](https://en.wikipedia.org/wiki/Kruskal%27s_algorithm)
-4. [MST](https://en.wikipedia.org/wiki/Minimum_spanning_tree) + [DFS] (https://en.wikipedia.org/wiki/Depth-first_search) TSP [approximation](https://en.wikipedia.org/wiki/Travelling_salesman_problem#Heuristic_and_approximation_algorithms).
-5. Cheapest Edges + DFS TSP approximation.
+4. [2-approximation](http://www.dis.uniroma1.it/~alberto/didattica/tcs-2011/alberto/TCS-approx-4.pdf) algorithm.
+5. Cheapest Edges + DFS approximation.
+6. Delaunay Triangulation + Iterative Point Addition
 
 ## Usage
 
@@ -94,10 +95,11 @@ output.txt (resulting tour)
 111804
 52086
 18295
+...
 ```
 
 ## References and inspirations
 
 1. Bowyer-Watson algorithm and improvements: http://www.gdmc.nl/publications/2002/Bowyer_Watson_algorithm.pdf
-2. MST + DFS TSP approximation:
+2. O(nlogn) Euristic for Eucledian TSP: https://www.researchgate.net/publication/215753374_An_On_log_n_Heuristic_for_the_Euclidean_Traveling_Salesman_Problem
 3. Images are generated from a dataset from [this](https://www.kaggle.com/c/traveling-santa-2018-prime-paths) Kaggle competition.
