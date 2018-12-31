@@ -9,7 +9,8 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 ![triang](Gallery/triangulation(ALL).png)
 ### TSP tour (Cheapest edges approximation)
 ![tsp](Gallery/improved(2).png)
-
+### MST (based on the trianguation)
+![mst](Gallery/MST(2.2).png)
 
 ## Algorithms
 
@@ -19,8 +20,50 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 4. [MST](https://en.wikipedia.org/wiki/Minimum_spanning_tree) + [DFS] (https://en.wikipedia.org/wiki/Depth-first_search) TSP [approximation](https://en.wikipedia.org/wiki/Travelling_salesman_problem#Heuristic_and_approximation_algorithms).
 5. Cheapest Edges + DFS TSP approximation.
 
+## Usage
+
+The library works with text files.
+
+input.txt (coordinates of points)
+```
+316.83673906150904 2202.34070733524
+4377.40597216624 336.602082171235
+3454.15819771172 2820.0530112481106
+4688.099297634771 2935.89805580997
+1010.6969517482901 3236.75098902635
+...
+```
+
+main.cpp
+```
+#include "triangulation.h"
+#include "geometry.h"
+
+using namespace std;
+
+int main() {
+    BowyerWatson bw;
+    // reading points from a file with coordinates
+    bw.fromCoords("input.txt");
+    // computing the triangulation
+    bw.compute();
+    // writing to a file
+    bw.toEdges("triang.txt");
+}
+```
+
+triang.txt (edges of triangulation; each number represents a point according to the input sequence)
+```
+197338 88708
+88708 20109
+88708 12785
+88708 123994
+88708 123616
+...
+```
+
 ## References and inspirations
 
 1. Bowyer-Watson algorithm and improvements: http://www.gdmc.nl/publications/2002/Bowyer_Watson_algorithm.pdf
 2. MST + DFS TSP approximation:
-3. Images from [this](https://www.kaggle.com/c/traveling-santa-2018-prime-paths) Kaggle competition.
+3. Images are generated from a dataset from [this](https://www.kaggle.com/c/traveling-santa-2018-prime-paths) Kaggle competition.
