@@ -31,8 +31,13 @@ Point Point::operator-(const Point& other) const {
 Edge::Edge() {}
 
 Edge::Edge(Point A, Point B) {
-    this->A = A;
-    this->B = B;
+    if (A.x > B.x || (A.x == B.x && A.y > B.y)) {
+        this->A = B;
+        this->B = A;
+    } else {
+        this->A = A;
+        this->B = B;
+    }
     len = sqrt((A.x - B.x)*(A.x - B.x) + (A.y - B.y)*(A.y - B.y));
 }
 
@@ -172,7 +177,7 @@ vector<Edge> toEdges(string filename, vector<Point> pts, int num_of_vert) {
     int first;
     while (fin >> first) {
         int prev = first, cur;
-        for (int i = 0; i < num_of_vert; i++) {
+        for (int i = 0; i < num_of_vert-1; i++) {
             fin >> cur;
             res.insert(Edge(pts[prev], pts[cur]));
             prev = cur;
@@ -181,10 +186,7 @@ vector<Edge> toEdges(string filename, vector<Point> pts, int num_of_vert) {
             res.insert(Edge(pts[cur], pts[first]));
     }
     fin.close();
-    vector<Edge> unrepeating;
-    for (unordered_set<Edge, EdgeHash>::iterator i = res.begin(); i != res.end(); i++)
-        unrepeating.push_back(*i);
-    return unrepeating;
+    return vector<Edge>(res.begin(), res.end());
 }
 
 void fromEdges(string filename, vector<Edge> edges) {

@@ -20,11 +20,17 @@ class TSP {
         TSP();
         TSP(vector<Point> coords);
         TSP(vector<Edge> edges);
+        // edges -> edge data structure
+        unordered_map<Edge, pair<Point, Point>, EdgeHash> edgeStruct();
+        // points -> edges
         void stripPoints(int points_in_strip);
         void toMST();
+        void toSmallestEdges();
+        // edges -> result
         void fromMST();
         void CLA();
-        void toSmallestEdges();
+        void triangleBFS();
+        // other
         void toFile(string filename);
     private :
         vector<Point> points;

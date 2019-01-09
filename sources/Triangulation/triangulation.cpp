@@ -188,7 +188,6 @@ void BowyerWatson::compute() {
 
 void BowyerWatson::showStruct() {
     cout << "STRUCT:" << endl;
-
     queue<int> QU;
     QU.push(triangles.size()-1);
     unordered_map<int, bool> uused;
@@ -224,14 +223,14 @@ void BowyerWatson::showStruct() {
 }
 
 void BowyerWatson::toEdges(string path) {
-    unordered_set<Edge, EdgeHash> res;
+    set<Edge> res;
     for (Triangle t : triangles) {
         res.insert(t.AB);
         res.insert(t.AC);
         res.insert(t.BC);
     }
     ofstream fout(path.c_str());
-    for (unordered_set<Edge, EdgeHash>::iterator i = res.begin(); i != res.end(); i++)
+    for (auto i = res.begin(); i != res.end(); i++)
         fout << i->A.n << " " << i->B.n << endl;
     fout.close();
 }
