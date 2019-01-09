@@ -46,6 +46,7 @@ vector<int> improve(vector<int> path, int seglen) {
     vector<int> segment, best, new_path;
     int i = 0;
     for (; i+seglen-1 < path.size(); i += seglen-1) {
+        if (i%10000 == 0) cout << i << endl;
         segment.clear();
         copy(path.begin()+i, path.begin()+i+seglen, back_inserter(segment));
         best = segment;
@@ -94,7 +95,7 @@ int main() {
 
     P = genPrimes(V);
     cout << "Before: (" << path.size() << ") " << len(path, 0, true) << endl;
-    path = repImprove(path, 1, 9, 9);
+    //path = repImprove(path, 1, 9, 9);
     path = repImprove(path, 10, 4, 8);
 
     cout << "Proceed? (y/n)";

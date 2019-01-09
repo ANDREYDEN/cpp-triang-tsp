@@ -52,31 +52,23 @@ inline ld genKey(Point centre, Point P) {
 }
 
 estruct TSP::edgeStruct() {
-    // for each point create a set of its neighbors sorted anticlockwise
+    // For each point create a set of its neighbors sorted anticlockwise
     vector<set<pair<ld, Point>>> adj(points.size());
     for (Edge e : edges) {
         adj[e.A.n].insert({genKey(e.A, e.B), e.B});
         adj[e.B.n].insert({genKey(e.B, e.A), e.A});
     }
-//    for (int i = 0; i < points.size(); i++) {
-//        cout << i << ": ";
-//        for (auto j = adj[i].begin(); j != adj[i].end(); j++)
-//            cout << j->second.n << " ";
-//        cout << endl;
-//    }
     set<Edge> test(edges.begin(), edges.end());
     estruct res;
     for (Edge e : edges)
-        res[e] = {{-1, -1, -1}, {-1, -1, -1}};
+        res[e] = {{-1, inf, inf}, {-1, inf, inf}};
     for (Point P : points) {
-        //cout << P.n << ": ";
         auto st = adj[P.n].begin();
         auto cur = st, nxt = st;
         nxt++;
         Edge e;
         for (;nxt != adj[P.n].end(); cur++, nxt++) {
             e = Edge(cur->second, nxt->second);
-            //cout << "{" << e.A.n << ", " << e.B.n << "} ";
             if (res[e].first.n == -1)
                 res[e].first = P;
             else
@@ -84,16 +76,31 @@ estruct TSP::edgeStruct() {
         }
         if (adj[P.n].size() > 2) {
             e = Edge(cur->second, st->second);
-            //cout << "{" << e.A.n << ", " << e.B.n << "}\n";
             if (res[e].first.n == -1)
                 res[e].first = P;
             else
                 res[e].second = P;
         }
     }
-//    for (Edge e : edges) {
-//        cout << e.A.n << " " << e.B.n << " | " << res[e].first.n << " " << res[e].second.n << endl;
-//    }
+    return res;
+}
+
+unordered_map<Edge, int, EdgeHash> TSP::ranking() {
+    // give each edge a rank
+    vector<set<pair<ld, Point>>> adj(points.size());
+    for (Edge e : edges) {
+        adj[e.A.n].insert({e.A.dist(e.B), e.B});
+        adj[e.B.n].insert({e.A.dist(e.B), e.A});
+    }
+    unordered_map<Edge, int, EdgeHash> res;
+    for (Point P : points) {
+        auto neighbors = adj[P.n];
+        int cnt = 0;
+        for (auto i = neighbors.begin(); i != neighbors.end(); i++) {
+            Edge e = Edge(P, i->second);
+            res[e] += cnt++;
+        }
+    }
     return res;
 }
 
@@ -188,16 +195,12 @@ void TSP::CLA() {
             adj[edge.A.n].push_back(edge.B.n);
             adj[edge.B.n].push_back(edge.A.n);
         }
-//    for (int i = 0; i < points.size(); i++)
-//        if (adj[i].size() == 1)
-//            cout << i << " " << adj[i][0] << " " << adj[i][1] << endl;
     result.push_back(0);
     int cur = adj[0][0];
     int prev = 0;
     while (cur != 0) {
         result.push_back(cur);
         int temp = cur;
-        //cout << cur << " " << adj[cur][0] << " " << adj[cur][1] << endl;
         cur = (adj[cur][0] != prev)? adj[cur][0] : adj[cur][1];
         prev = temp;
     }
@@ -206,63 +209,55 @@ void TSP::CLA() {
 
 void TSP::triangleBFS() {
     // Iteratively adding points to the TSP tour
+
+    // find a staring edge (minimal length containing 0)
     Edge stEdge;
     ld minLen = inf;
     for (Edge e : edges)
-        if ((e.A.n == 0 || e.B.n == 0) && e.len < minLen) {
+        if (e.len < minLen) {
             stEdge = e;
             minLen = e.len;
         }
-    vector<int> to(points.size(), -1);
-    estruct adj = edgeStruct();
+    vector<int> to(points.size(), -1); // pointer to the next point in the tour
+    estruct adj = edgeStruct(); // edge -> {firstNeighbor, secondNeighbor}
+    unordered_map<Edge, int, EdgeHash> rnk = ranking();
     cout << "made edge structure" << endl;
-    queue<Edge> Q;
+    priority_queue<pair<ld, Edge>> Q;
     vector<int> used(points.size(), false);
     used[stEdge.A.n] = used[stEdge.B.n] = true;
     to[stEdge.A.n] = stEdge.B.n;
     to[stEdge.B.n] = stEdge.A.n;
-    Q.push(stEdge);
+    Q.push({0, stEdge});
     int cnt;
     while (!Q.empty()) {
-        Edge cur = Q.front();
-//        cout << 0 << " ";
-//        int temp = to[0];
-//        while (temp != 0) {
-//            cout << temp << " ";
-//            temp = to[temp];
-//        }
-//        cout << temp << endl;
+        Edge cur = Q.top().second;
         Q.pop();
-        //cout << cur.A.n << " " << cur.B.n << " | " << adj[cur].first.n << " " << adj[cur].second.n << endl;
+        // order th neighbors {shorter, longer}
         if (cur.A.dist(adj[cur].first) + cur.B.dist(adj[cur].first) >
             cur.A.dist(adj[cur].second) + cur.B.dist(adj[cur].second))
             swap(adj[cur].first, adj[cur].second);
+
+        Point neigh = {-1, -1, -1};
         if (!used[adj[cur].first.n]) {
             used[adj[cur].first.n] = true;
-
-            if (to[cur.A.n] == cur.B.n) {
-                to[cur.A.n] = adj[cur].first.n;
-                to[adj[cur].first.n] = cur.B.n;
-            } else {
-                to[cur.B.n] = adj[cur].first.n;
-                to[adj[cur].first.n] = cur.A.n;
-            }
-
-            Q.push(Edge(cur.A, adj[cur].first));
-            Q.push(Edge(cur.B, adj[cur].first));
+            neigh = adj[cur].first;
         } else if (!used[adj[cur].second.n]){
             used[adj[cur].second.n] = true;
-
+            neigh = adj[cur].second;
+        }
+        if (neigh.n != -1) {
             if (to[cur.A.n] == cur.B.n) {
-                to[cur.A.n] = adj[cur].second.n;
-                to[adj[cur].second.n] = cur.B.n;
+                to[cur.A.n] = neigh.n;
+                to[neigh.n] = cur.B.n;
             } else {
-                to[cur.B.n] = adj[cur].second.n;
-                to[adj[cur].second.n] = cur.A.n;
+                to[cur.B.n] = neigh.n;
+                to[neigh.n] = cur.A.n;
             }
+            Edge e1 = Edge(cur.A, neigh);
+            Edge e2 = Edge(cur.B, neigh);
 
-            Q.push(Edge(cur.A, adj[cur].second));
-            Q.push(Edge(cur.B, adj[cur].second));
+            Q.push({-quality(e1, adj[e1].first, adj[e1].second, rnk[e1]), e1});
+            Q.push({-quality(e2, adj[e2].first, adj[e2].second, rnk[e2]), e2});
         }
     }
 
@@ -287,13 +282,45 @@ void TSP::triangleBFS() {
     int cur = to[0];
     result.push_back(0);
     while (cur != 0) {
-        //cout << cur << endl;
         result.push_back(cur);
         cur = to[cur];
     }
-    cout << "points :" << points.size() << endl;
-    cout << "result size: " << result.size() << endl;
     result.push_back(0);
+}
+
+ld TSP::quality(Edge e, Point L, Point R, int rnk) {
+    if (L.n == -1)
+        return e.A.dist(R) + e.B.dist(R) - e.len*rnk;
+    else
+        return e.A.dist(L) + e.B.dist(L) - e.len*rnk;
+}
+
+ld TSP::tourLength(vector<Point> coords) {
+    // returns the tour length
+    ld res = 0;
+    for (int i = 0; i < result.size()-1; i++)
+        res += coords[result[i]].dist(coords[result[i+1]]);
+    res += coords[result.back()].dist(coords[result[0]]);
+    return res;
+}
+
+ld TSP::tourPrimeLength(vector<Point> coords) {
+    // Here each 10th edge is 1.1 times longer unless coming from a prime point
+    vector<bool> prime(points.size(), true);
+    prime[0] = prime[1] = false;
+    for (int i = 2; i < points.size(); i++)
+        if (prime[i])
+            for (int j = i+i; j < points.size(); j+=i)
+                prime[j] = false;
+
+    ld res = 0;
+    for (int i = 0; i < result.size()-1; i++)
+        if (i%10 == 9 && !prime[result[i]])
+            res += coords[result[i]].dist(coords[result[i+1]])*1.1;
+        else
+            res += coords[result[i]].dist(coords[result[i+1]]);
+    res += coords[result.back()].dist(coords[result[0]]);
+    return res;
 }
 
 void TSP::toFile(string filename) {
