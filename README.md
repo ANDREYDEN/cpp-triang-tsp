@@ -8,7 +8,7 @@ There are in fact 3 libraries: geometry, triangulation computing, TSP approximat
 ### Triangulation
 ![triang](Gallery/triangulation(ALL).png)
 ### TSP tour (Cheapest edges approximation)
-![tsp](Gallery/improved(2).png)
+![tsp](Gallery/improved(1.7).png)
 ### MST (based on the trianguation)
 ![mst](Gallery/MST(2.2).png)
 
